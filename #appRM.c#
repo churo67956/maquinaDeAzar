@@ -55,7 +55,7 @@ void APP_RM_Task(){
   case APP_RM_STATE_FIX_DISPLAY://estado de fijar los displays
     appRM.pointer = appRM.pointer + 1;
     if (appRM.pointer == 2){
-      appRM.st
+      appRM.state = APP_RM_STATE_DISABLE;
     }
     else{
        appRM.pointer = appRM.pointer + 1;
