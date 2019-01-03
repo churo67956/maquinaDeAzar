@@ -1,0 +1,64 @@
+#include "appRM.h"
+
+//funcion de inicializacion del modelo
+void APP_RM_Initialize(){
+  appRM.timerCounter = 0;//contador de 1seg
+  appRM.updateTimerCounter = 0;//contador de 50ms
+  appRM.pointer = 0;//apuntador de display 
+  appRM.state = APP_RM_STATE_INIT;//estado de inicio
+}
+
+//funcion de actualizacion del valor de los displays
+void APP_RM_Update(char pointer){
+  if (appModel.digit[pointer].value == 7){
+    appModel.digit[pointer].value = 0;
+  }
+  else{
+    appModel.digit[pointer].value = appModel.digit[pointer].value + 1;
+  }
+}
+//maquina de estados
+void APP_RM_Task(){
+  switch (appRM.state){
+  case APP_RM_STATE_INIT://estado de inicio
+    appModel.digit[0].value = APP_RM_Random();
+    appModel.digit[1].value = appModel.digit[0] == 7 ? 0 : appModel.digit[0].value + 1;
+    appModel.digit[2].value = appModel.digit[0] == 0 ? 7 : appModel.digit[0].value - 1;
+    appRM.state = APP_RM_STATE_WAIT;
+    break;
+  case APP_RM_STATE_WAIT:
+    //mas prioritario el estado de FIX_DISPLAY que el estado UPDATE
+    if (appRM.timerCounter >= 200){//fijar el display
+      appRM.timerCounter = 0;//reiniciamos el contador
+      appRM.state = APP_RM_STATE_FIX_DISPLAY;//estado fijar el display
+    }
+    else if(appRM.updateTimerCounter >= 10){//actualizar los digitos
+      appRM.updateTimerCounter = 0;//reiniciamos el contador
+      appRM.state = APP_RM_STATE_UPDATE;//estado de actualizacion
+    }
+    break;
+  case APP_RM_STATE_UPDATE://solo actualizar los digitos que no estan fijos
+    if (appRM.pointer == 0){//actualizar todos los digitos
+      APP_RM_Update(0);
+      APP_RM_Update(1);
+      APP_RM_Update(2);
+    }
+    else if (appRM.pointer == 1){//actualizar 2 digitos
+      APP_RM_Update(1);
+      APP_RM_Update(2);
+    }
+    else if (appRM.pointer == 2){//actualizar 1 digito
+      APP_RM_Update(2);
+    }
+    appRM.state = APP_RM_STATE_WAIT;
+    break;
+  case APP_RM_STATE_FIX_DISPLAY:
+    appRM.pointer = appRM.pointer + 1;
+    if (appRM.pointer == 2){
+      app.RM
+    }
+    break;
+  default:
+    break;
+  }
+}
