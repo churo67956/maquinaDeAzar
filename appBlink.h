@@ -3,7 +3,7 @@
 typedef enum {//estados
   APP_S2_STATE_INIT = 0,//estado de inicio
   APP_S2_STATE_WAIT = 1,//estado de espera
-  APP_S2_STATE_BLINK = 2,//estado de parpadeo
+  APP_S2_STATE_ANIMATION = 2,//estado de animacion
   APP_S2_STATE_DISABLE = 3//estado desactivado
 }APP_BLINK_STATE;
 

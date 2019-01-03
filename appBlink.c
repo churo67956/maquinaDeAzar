@@ -10,12 +10,50 @@ void APP_BLINK_Initialize(){
 //máquina de estados
 void APP_BLINK_Task(){
   switch (appBlink.state){
-  case APP_BLINK_STATE_INIT:
+  case APP_BLINK_STATE_INIT://estao de inicion
+    appBlink.animation = appRM.prize + appRM.prize;//fijamos en numero de veces del parpadeo
+    if (appBlink.animation == 0){//no es necesario la animacion
+      appBlink.state = APP_BLINK_STATE_DISABLE;//estado fin animacion
+    }
+    else{
+      appBlink.state = APP_BLINK_STATE_ANIMATION;//estado de animacion
+    }
     break;
-  case APP_BLINK_STATE_WAIT:
+  case APP_BLINK_STATE_WAIT://estado de espera
+    if (appBlink.timerCount >= 100){//han  pasado 500ms
+      appBlink.timerCount = 0;//reiniciamos contador
+      appBlink.state = APP_BLINK_STATE_ANIMATION;//estado de animacion
+    }
     break;
-  case APP_BLINK_STATE_BLINK:
+  case APP_BLINK_STATE_ANIMATION://animacion del parpadeo
+    if (appRM.prize == 1){//digitos no consecutivos 
+      appModel.digit[0].refresh = !appModel.digit[0].refresh;//negacion
+      appModel.digit[2].refresh = !appModel.digit[0].refresh;//negacion
+    }
+    else if (appRM.prize == 2){//digitos consecutivos
+      if (appModel.digit[0].value == appModel.digit[1].value){//el primero y segundo consecutivos
+	appModel.digit[0].refresh = !appModel.digit[0].refresh;//negacion
+	appModel.digit[1].refresh = !appModel.digit[0].refresh;//negacion
+      }
+      else if (appModel.digit[1].value == appModel.digit[2].value){//el segundo y tercero consecutivos
+	appModel.digit[1].refresh = !appModel.digit[0].refresh;//negacion
+	appModel.digit[2].refresh = !appModel.digit[0].refresh;//negacion
+      }
+    }
+    else {//todos los digitos
+      appModel.digit[0].refresh = !appModel.digit[0].refresh;//negacion
+      appModel.digit[1].refresh = !appModel.digit[0].refresh;//negacion
+      appModel.digit[2].refresh = !appModel.digit[0].refresh;//negacion
+    }
+    if (appBlink.pointer < appBlink.animation){//es necesario siguir animando
+      appBlink.pointer = appBlink.pointer + 1;//incrementamos puntero 
+      appBlink.state = APP_BLINK_STATE_WAIT;//estado de espera
+    }
+    else{//fin animacion
+      appBlink.state = APP_BLINK_STATE_DISABLE;//estado fin de animacion
+    }
+    break;
+  default:
     break;
   }
 }
-#endif
