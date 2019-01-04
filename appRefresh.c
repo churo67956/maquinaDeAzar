@@ -4,14 +4,16 @@
 void APP_REFRESH_Initialize(){
   appRefresh.timerCount = 0;//inicializacion del contador
   appRefresh.pointer = 0;//inicializacion del puntero
-  appRefresh.state = APP_REFRESH_STATE_INIT;//inicializacion del estado
+  appRefresh.state = 0;//inicializacion del estado
 }
 
 //maquina de estados
 void APP_REFRESH_Task(){
   switch (appRefresh.state){
   case APP_REFRESH_STATE_INIT://estado de inicio, por protocolo
-    appRefresh.state = APP_REFRESH_STATE_WAIT;
+    APP_PIC_PORTDInitialize();//inicializamos el puerto D
+    APP_PIC_PORTAInitialize();//inicializamos el puerto A
+    appRefresh.state = APP_REFRESH_STATE_WAIT;//estado de espera
     break;
   case APP_REFRESH_STATE_WAIT://estado de espera
     if (appRefresh.timerCount >= 1){//han pasado los 5 ms
@@ -33,5 +35,6 @@ void APP_REFRESH_Task(){
     break;
   default:
     break;
+  }
 }
 		     

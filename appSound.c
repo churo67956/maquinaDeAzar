@@ -2,38 +2,48 @@
 
 //funcion de inicializacion del modelo
 void APP_SOUND_Initialize(){
-  appSound.timerCount = 0;//contador de 20ms
-  appSound.animation = ;//animacion es el doble del tipo de premio
-  appSound.pointer = 0;//hasta el valor de la animacion
-  appSound.hz =0;//frecuencia
-  appSound.state = APP_SOUND_STATE_INIT;//estado inicial 
+  appSound.timerCount = 0;//contador
+  appSound.duration = 0;//duracion de la pista
+  appSound.track = 0;//cadena de frecuencias
+  appSound.length = 0;//longitud de la cadena pista
+  appSound.state = APP_SOUND_STATE_DISABLE;//estado inicial 
 }
 
-void APP_SOUND_SetHz(char hz){
-  appSound.hz =hz;//frecuencia
+//funcion para fijar la pista a sonar
+void APP_SOUND_SetTrack(unsigned char *track,unsigned char duration/*,void (*callback)()*/){
+  appSound.track = track;
+  appSound.duration = duration;
+  //APP_SOUND_Callback = callback;
 }
 
 //máquina de estados
 void APP_SOUND_Task(){
   switch (appSound.state){
   case APP_SOUND_STATE_INIT:
-    APP_PIC_CPPInitialize();
-    appSound.state = APP_SOUND_STATE_ANINATION;
+    APP_PIC_RC2CPPInitialize();//inicializacion del modulo CPP
+    appSound.state = APP_SOUND_STATE_PLAY;
     break;
   case APP_SOUND_STATE_PLAY:
-    APP_PIC_CPPlay(appSound.hz);
-    app
-    break;
-  case APP_SOUND_STATE_WAIT:
-    break;
-  case APP_SOUND_STATE_ANIMATION:
-    if (pointer){
-      
+    if (appSound.timerCount >= appSound.duration){//ha pasado la duracion de la pista
+      appSound.timerCount = 0;//reiniciar el contador
+      appSound.state = APP_SOUND_STATE_STOP;//estado de desactivado
     }
-    break;
-  case APP_SOUND_STATE_DISABLE:
-    break;
-  default:
+    else{//siguiente nota
+      if (appSound.pointer < appSound.length){//existen notas
+	APP_PIC_CPPWM(appSound.track[appSound.pointer]);//tocar la siguiente nota
+	appSound.pointer = appSound.pointer + 1;//actualizar apuntador
+      }
+      else{
+	appSound.pointer = 0;//reiniciar el apuntador
+      }
+    }
+    break;   
+  case APP_SOUND_STATE_STOP://estado parar de sonar
+    /*if (APP_SOUND_Callback){//ejecutar el callback
+      APP_SOUND_Callback();
+      }*/
+    APP_PIC_CPPStop();//paramos de sonar
+  default://APP_SOUND_STATE_DISABLE
     break;
   }
 }

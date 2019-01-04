@@ -24,32 +24,48 @@ __CONFIG(WRT_OFF & WDTE_OFF & PWRTE_OFF & FOSC_XT & LVP_OFF);
 
 static void interrupt isr(void);
 
+//funcion de inicializacion
+void Initialize();
+
+//
+//FUNCION PRINCIPAL DEL PROGRAMA
+//
 void main(){
-  //valores por defecto al encender la máquina
-  appModel.digit[0].value = 0;
-  appModel.digit[1].value = 0;
-  appModel.digit[2].value = 0;
-  
-  APP_MODEL.Initialization();//inicialización de las 3 cifras a cero
-  APP_DISPLAY.Initialization();//inicialización de la acción mostrar números en placa  
-  while(1){//hilo principal, tareas que debe atender el micro
-    APP_DISPLAY.Task();//mostrar los numeros en los display
-    APP_S2.Task();//máquina de estados pulsador S2
-    APP_RM.Task();//máquina de estados Maquina Aleatorio
+  Initialize();  //funcion de inicializacion de parametros para el correcto funcionamiento del programa
+  WHILE(1){//HILO PRINCIPAL, TAREAS QUE DEBE ATENDER EL MICRO
+    APP_REFRESH.TASK();//maquina de estados de refresco
+    APP_S2_TASK();//maquina de estados pulsadar boton
+    APP_RM_Task();//maquina de estados maquina de azar
+    APP_BLINK_Task();//maquina de estados parpadeo
+    APP_SOUND_Task();//maquina de estados de sonidos
+    APP_ORCHESTRATE_Task();//maquina de estados animacion de sonidos
   }
+}
+
+void Initialize(){
+ //Configuracion de la tarea REFRESH
+  APP_REFRESH_Initialize();//funcion de inicializacion de la tarea REFRESH
+  //Configuracion de la tarea S2(presionar el boton de inicio de partida)
+  APP_S2_Initialize();//funcion de inicializacion de la tarea S2
+  APP_RM_Initialize();//configuracion de la maquina de azar
+  APP_BLINK_Initialize();//configuracion del efecto de parpadeo
+  APP_SOUND_Initialize();//configuracion del efecto de parpadeo
+  APP_ORCHESTRATE_Initialize();//configuracion del efecto sonidos
+  appRefresh.state = APP_REFRESH_STATE_INIT;//pasamos al estado de inicio
+  appS2.state = APP_S2_STATE_INIT;//pasamos al estado de inicio
 }
 
 static void interrupt isr(){
   if (T0IF){
     T0IF = 0;//bajamos el flag
-    appDisplayModel.timerCounter += 1;//incrementados contador de 5ms		
+    appRefresh.timerCounter = appRefresh.timerCounter + 1;//incrementados contador de 5ms		
     if (appS2Model.state == APP_S2_STATE_DEBOUNCE){//estado de bloque 
       appS2Model.timerCount += 1; //incrementados contador de 20ms
     }
     if (appRModel.state >= APP_RM_STATE_WAIT
 	& appRModel.state < APP_RM_STATE_STOP){//incremetamos los contadores de RM mientras la partida no termine
       appRModel.timerCount +=1;//contador de 1sg
-      appRModel.setterTimerCount +=1;//aumentamos contador de 50ms
+      appRModel.updateTimerCount +=1;//aumentamos contador de 50ms
     }
     if (appBlinkModel.state == APP_BLINK_STATE_WAIT){//si estamos bloqueados 
       appBlinkModel.timerCount +=1;//aumentamos contador de 500ms
