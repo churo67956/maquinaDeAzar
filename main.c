@@ -1,9 +1,10 @@
 //Autores : Erik Churo, Eddyson Aushay
-//Trabajo Final
-//Descripción : Se debe programar un juego de azar basado en combinaciones aleatorias de tres números entre
-//              0 y 7 que se mostrarán en la placa con los displays de 7 segmentos: en función de los números
-//              repetidos se identificarán combinaciones premiadas. La jugada completa irá acompañada con
-//              efectos de sonido y parpadeos en las cifras iguales.
+//TRABAJO FINAL
+//DESCRIPCIÓN : SE DEBE PROGRAMAR UN JUEGO DE AZAR BASADO EN COMBINACIONES ALEATORIAS DE TRES NÚMEROS ENTRE
+//              0 Y 7 QUE SE MOSTRARÁN EN LA PLACA CON LOS DISPLAYS DE 7 SEGMENTOS: EN FUNCIÓN DE LOS NÚMEROS
+//              REPETIDOS SE IDENTIFICARÁN COMBINACIONES PREMIADAS. LA JUGADA COMPLETA IRÁ ACOMPAÑADA CON
+//              EFECTOS DE SONIDO Y PARPADEOS EN LAS CIFRAS IGUALES.
+
 #include<htc.h> 			//Incluimos librería del micro a usar
 __CONFIG(WRT_OFF & WDTE_OFF & PWRTE_OFF & FOSC_XT & LVP_OFF);
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -15,60 +16,73 @@ __CONFIG(WRT_OFF & WDTE_OFF & PWRTE_OFF & FOSC_XT & LVP_OFF);
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ 	
 #define _XTAL_FREQ 4000000 				//Oscilador Interno de 4MHZ	
 
-//Librerias
-#include "appUtils.c"
-#include "appModel.c"
-#include "appDisplay.c"
-#include "appS2.c"
-#include "appBlink.c"
+//Funciones para el correcto funcionamiento del programa principal
+#include "appConfiguration.h"
+#include "appPIC.h"
+#include "appModel.h"
+#include "appRefresh.h"
+#include "appS2.h"
+#include "appRM.h"
+#include "appBLINK.h"
+#include "appSOUND.h"
+#include "appOrchestrate.h"
 
+//atencion de la interrupciones
 static void interrupt isr(void);
-
 //funcion de inicializacion
 void Initialize();
 
 //
 //FUNCION PRINCIPAL DEL PROGRAMA
 //
+
 void main(){
+
   Initialize();  //funcion de inicializacion de parametros para el correcto funcionamiento del programa
-  WHILE(1){//HILO PRINCIPAL, TAREAS QUE DEBE ATENDER EL MICRO
-    APP_REFRESH.TASK();//maquina de estados de refresco
-    APP_S2_TASK();//maquina de estados pulsadar boton
+  while(1){//HILO PRINCIPAL, TAREAS QUE DEBE ATENDER EL MICRO
+    APP_REFRESH_Task();//maquina de estados de refresco
+    APP_S2_Task();//maquina de estados pulsadar boton
     APP_RM_Task();//maquina de estados maquina de azar
     APP_BLINK_Task();//maquina de estados parpadeo
     APP_SOUND_Task();//maquina de estados de sonidos
     APP_ORCHESTRATE_Task();//maquina de estados animacion de sonidos
   }
 }
-
 void Initialize(){
- //Configuracion de la tarea REFRESH
+  APP_PIC_Initialize();//inicializamos el puerto D
+  APP_CONFIGURATION_Initialize();//inicializamos las variables de configuracion
+  APP_MODEL_Initialize();//inicialimos el modelo de datos principal
   APP_REFRESH_Initialize();//funcion de inicializacion de la tarea REFRESH
-  //Configuracion de la tarea S2(presionar el boton de inicio de partida)
   APP_S2_Initialize();//funcion de inicializacion de la tarea S2
   APP_RM_Initialize();//configuracion de la maquina de azar
   APP_BLINK_Initialize();//configuracion del efecto de parpadeo
   APP_SOUND_Initialize();//configuracion del efecto de parpadeo
   APP_ORCHESTRATE_Initialize();//configuracion del efecto sonidos
-  appRefresh.state = APP_REFRESH_STATE_INIT;//pasamos al estado de inicio
-  appS2.state = APP_S2_STATE_INIT;//pasamos al estado de inicio
+  appRefresh.state = APP_STATE_INIT;//pasamos al estado de inicio
+  appS2.state = APP_STATE_INIT;//pasamos al estado de inicio
+  APP_PIC_TIMER0Set(appConfig._TMR0_);//comenzamos a contar
 }
 
+//funcion de atencion a la interrupciones
 static void interrupt isr(){
   if (T0IF){
     T0IF = 0;//bajamos el flag
-    appRefresh.timerCounter = appRefresh.timerCounter + 1;//incrementados contador de 5ms		
-    if (appS2Model.state == APP_S2_STATE_DEBOUNCE){//estado de bloque 
-      appS2Model.timerCount += 1; //incrementados contador de 20ms
+    APP_PIC_TIMER0Set(appConfig._TMR0_);//comenzamos a contar
+    appRefresh.timerCount = appRefresh.timerCount + 1;//incrementados contador de 5ms		
+    if (appS2.state == APP_STATE_DEBOUNCE){//estado de bloque 
+      appS2.timerCount = appS2.timerCount + 1; //incrementados contador de 20ms
     }
-    if (appRModel.state >= APP_RM_STATE_WAIT
-	& appRModel.state < APP_RM_STATE_STOP){//incremetamos los contadores de RM mientras la partida no termine
-      appRModel.timerCount +=1;//contador de 1sg
-      appRModel.updateTimerCount +=1;//aumentamos contador de 50ms
+    if (appRM.state == APP_STATE_ANIMATION){//incremetamos los contadores de RM mientras la partida no termine
+      appRM.timerCount = appRM.timerCount + 1;//contador de 1sg
+      appRM.updateTimerCount = appRM.updateTimerCount + 1;//aumentamos contador de 50ms
     }
-    if (appBlinkModel.state == APP_BLINK_STATE_WAIT){//si estamos bloqueados 
-      appBlinkModel.timerCount +=1;//aumentamos contador de 500ms
+    if (appBlink.state == APP_STATE_ANIMATION){//si estamos bloqueados 
+      appBlink.timerCount = appBlink.timerCount + 1;//aumentamos contador de 500ms
+    }
+    if (appSound.state == APP_STATE_ANIMATION){//si estamos sonando
+      appSound.timerCount = appSound.timerCount + 1; //aumentar contador
+      appSound.nextTimerCount = appSound.nextTimerCount + 1;//contador de la duracion de cada nota 
     }
   }
 }
+

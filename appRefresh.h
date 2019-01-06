@@ -1,23 +1,26 @@
+//Autor : Erik Churo y Edison Aushay
+//ACCION DE REFRESCO DE LOS DISPLAYS CADA 5MS
+//LOS DIFERENTES ESTADOS POR LOS QUE PASA LA TAREA
+//SON : 
+//	INIT : estado de inicio
+//      REFRESH : estado de refresco del i-esimo digito
+//      WAIT : estado de espera de 5ms
+//      DISABLE : estado desactivado 
 #ifndef APP_REFRESH
-#def APP_REFRESH
-enum APP_REFRESH_STATE{//estados
-  APP_REFRESH_STATE_INIT = 1,//estado de inicio
-  APP_REFRESH_STATE_WAIT = 2,//estado de espera
-  APP_REFRESH_STATE_REFRESH = 3//estado de refresco
-};
-
+#define APP_REFRESH
+#include "appConfiguration.h"
+#include "appModel.h"
+#include "appPIC.h"
+//modelo de datos de la accion REFRESH
 struct APP_REFRESH_MODEL{
-  char timerCount;//contador de 5ms
-  char pointer;//apuntador del display a refrescar
-  enum APP_REFRESH_STATE state; //estados
+  unsigned char timerCount;//contador de 5ms
+  unsigned char pointer;//apuntador del display a refrescar
+  unsigned char state; //estados
 };
-
-//modelo de datos (acceso global)
+//instancia del modelo de datos (acceso global)
 struct APP_REFRESH_MODEL appRefresh;
-
 //funcion de inicializacion del modelo
 void APP_REFRESH_Initialize();
-
 //máquina de estados
 void APP_REFRESH_Task();
 #endif

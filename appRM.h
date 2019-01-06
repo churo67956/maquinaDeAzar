@@ -1,26 +1,31 @@
+//Autor : Erik Churo y Edison Aushay
+//ACCION PROPIA DE LA MAQUINA DE AZAR ES DECIR 
+// o ESTADO INIT : LA GENERACION DE NUMEROS ALEATORIOS
+// o ESTADO ANIMATION : CAMBIO DE LOS DIGITOS CADA 50MS
+// o ESTADO FIX_DISPLAY : FIJAR LOS DIGITOS EN INTERVALOS DE 1 SEGUNDO Y EFECTOS SONOROS DE PARADA
+// o ESTADO WAIT_UNTIL_PLAY_END : ES NECESARIO ESPERAR A QUE LA ULTIMA NOTA FINALIZE PARA IR AL ESTADO END 
+// o ESTADO END : ANALIZAR SI LA SECUENCIA FINAL ES LA PREMIADA INICIAR LOS EFECTOS DE PARPADEO 
+//                Y SONOROS EN CASO DE SER UNA SECUENCIA PREMIADA.SI LA SECUENCIA NO ES PREMIADA ACTIVA
+//                EL PULSADOR
 #ifndef APP_RM
 #define APP_RM
-enum APP_RM_STATE{//estados
-  APP_RM_STATE_INIT = 1,//estado de inicio
-  APP_RM_STATE_WAIT = 2,//estado no pulsador
-  APP_RM_STATE_UPDATE = 3,//estado de espera
-  APP_RM_STATE_FIX_DISPLAY = 4,//estado
-  APP_RM_STATE_WAIT_UNTIL_PLAY_END = 5,//la partida finaliza si la ultima nota ha dejado de sonar 
-  APP_RM_STATE_END = 6,//estado fin partida
-  APP_RM_STATE_DISABLE = 6//estado inactivo
-};
-
+#include "appConfiguration.h"
+#include "appModel.h"
+#include "appPIC.h"
+#include "appSound.h"
+#include "appS2.h"
+#include "appBlink.h"
+#include "appOrchestrate.h"
+//modelo de datos de la accion
 struct APP_RM_MODEL{
   unsigned char timerCount;//contador de 50ms
   unsigned char updateTimerCount;//contador de 1seg
   unsigned char pointer;//siguiente digito a parar
   unsigned char prize;//premio
-  enum APP_RM_STATE state; //estados
+  unsigned char state; //estados
 };
-
-//modelo de datos (acceso global)
+//instancia del modelo de datos (acceso global)
 struct APP_RM_MODEL appRM;
-
 //funcion de inicializacion del modelo
 void APP_RM_Initialize();
 //funcion de actualizacion de los digitos
