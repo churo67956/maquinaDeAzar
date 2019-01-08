@@ -20,7 +20,7 @@ struct APP_ORCHESTRATE_MODEL appOrchestrate;
 //funcion de inicializacion
 void APP_ORCHESTRATE_Initialize();
 //fija la melodia a sonar segun el premio e instante de la animacion
-void APP_ORCHESTRATE.SetSound();
+void APP_ORCHESTRATE_SetSound();
 //maquina de estados
 void APP_ORCHESTRATE_Task();
 #endif

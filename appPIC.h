@@ -6,9 +6,11 @@
 #define _APP_PIC_
 #include <htc.h> 
 #include "appConfiguration.h"
+//funcion de inicializacion
+void APP_PIC_Initialize();
 //Parametros : index {parametro de entrada}
 //enciende el display indicado como parametro dentrada
-void APP_PIC_Refresh(char index);
+void APP_PIC_Refresh(unsigned char value,unsigned char index);
 //configuracion del puerto D
 void APP_PIC_PORTDInitialize();
 //configuracion del puerto A
@@ -27,4 +29,6 @@ void APP_PIC_RC2CPPInitialize();
 void APP_PIC_CPPWM(unsigned char,unsigned char);
 //dejar de modular, deja de zumbar
 void APP_PIC_CPPStop();
+//apagar un display
+void APP_PIC_TurnOff(unsigned char);
 #endif

@@ -9,17 +9,15 @@ struct APP_TRACK{
 };
 //estructura de datos que aglutina los diferentes estados de las tareas
 enum APP_STATE{//estados
-  APP_STATE_INIT = 1,//estado de inicio
-  APP_STATE_WAIT = 2,//estado de espera
-  APP_STATE_FIX_DISPLAY = 3,//estado de fijar display
-  APP_STATE_WAIT_UNTIL_PLAY_END = 4,//la partida finaliza si la ultima nota ha dejado de sonar 
-  APP_STATE_END = 5,//estado final
-  APP_STATE_REFRESH = 6,//estado de refresco
-  APP_STATE_HIGH = 7,//estado no pulsador
-  APP_STATE_DEBOUNCE = 8,//estado de espera, elimina rebotes
-  APP_STATE_LOW = 9,//estado pulsador
-  APP_STATE_ANIMATION = 10,//estado de animacion ( sonido , parpadeo) 
-  APP_STATE_DISABLE =11,//estado desactivado
+  APP_STATE_INIT = 0,//estado de inicio
+  APP_STATE_WAIT_UNTIL_PLAY_END = 1,//la partida finaliza si la ultima nota ha dejado de sonar 
+  APP_STATE_END = 2,//estado final
+  APP_STATE_REFRESH = 3,//estado de refresco
+  APP_STATE_HIGH = 4,//estado no pulsador
+  APP_STATE_DEBOUNCE = 5,//estado de espera, elimina rebotes
+  APP_STATE_LOW = 6,//estado pulsador
+  APP_STATE_ANIMATION = 7,//estado de animacion ( sonido , parpadeo) 
+  APP_STATE_DISABLE = 8,//estado desactivado
 };
 
 //fichero de configuracion de la aplicacion
@@ -36,6 +34,7 @@ struct APP_CONFIGURATION{
   unsigned char _20_MS_;//espera de 50 ms
   unsigned char _50_MS_;//espera de 50 ms
   unsigned char _500_MS_;//espera de 500ms
+  unsigned char _125_MS_;//espera de 250ms
   unsigned char _250_MS_;//espera de 250ms
   unsigned char _1_SEG_;//espera de 1seg
   unsigned char _TMR0_;//TMR0

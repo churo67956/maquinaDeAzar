@@ -12,9 +12,11 @@
 #include "appConfiguration.h"
 #include "appRM.h"
 
+unsigned char ji = 0;
+
 //modelo de datos de la accion pulsar
 struct APP_S2_MODEL{
-  char timerCount;//contador de 20ms
+  unsigned char timerCount;//contador de 20ms
   unsigned char state; //estados
 };
 //instancia del modelo de datos (acceso global)

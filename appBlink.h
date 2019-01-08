@@ -10,6 +10,7 @@
 #include "appConfiguration.h"
 #include "appRM.h"
 #include "appModel.h"
+#include "appRefresh.h"
 //modelo de datos de la accion
 struct APP_BLINK_MODEL{
   unsigned char timerCount;//contador de 500ms

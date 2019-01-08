@@ -11,7 +11,8 @@ void APP_CONFIGURATION_Initialize(){
   appConfig._500_MS_ = 100;//espera de 500ms
   appConfig._250_MS_ = 50;//espera de 250ms
   appConfig._50_MS_= 10;//espera de 50 ms
-  appConfig._20_MS_= 4;//espera de 20ms
+  appConfig._20_MS_= 4;//espera de 20ms 
+  appConfig._125_MS_ = 25;//espera de 125ms 
   appConfig._5_MS_=1;//espera de 5 ms 
   appConfig._TMR0_ = 217;//TMR0
   appConfig._10_ = 10;//10

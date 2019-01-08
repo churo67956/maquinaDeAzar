@@ -41,10 +41,24 @@ char APP_PIC_TIMER0Value(){
  return TMR0;
 }
 
+//apagar un display 
+//Parametro de entrada : display
+void APP_PIC_TurnOff(unsigned char display){
+	if (display == 0){
+		PORTAbits.RA0 = 0;
+	}
+	else if (display == 1){
+		PORTAbits.RA1 = 0;
+	}
+	else {
+		 PORTAbits.RA2 = 0;
+	}
+}
+
 //refresco de los display 
 //Parametro de entrada : display
-void APP_PIC_Refresh(char display){
-  PORTD = appConfig.PORTD_CODE[display];//enviamos el codigo por el puerto D
+void APP_PIC_Refresh(unsigned char value,char display){
+  PORTD = appConfig.PORTD_CODE[value];//enviamos el codigo por el puerto D
   PORTA = appConfig.PORTA_CODE[display];//enviamos el codigo por el puerto A
 }
 //funcion que dice si el boton S2 esta pulsado
@@ -63,6 +77,8 @@ void APP_PIC_RC2CPPInitialize(){
 //comenzar la modulacion, comieza a zumbar
 //parametros de entrada : _PRE2{periodo},_CCPR1L{ancho de pulso}
 void APP_PIC_CPPWM(unsigned char _PR2,unsigned char _CCPR1L){
+  TRISC = 0xFB;//Terminal RC2 como salida
+  CCP1CON = 0b00001100;//Configuracion modo PWM
   PR2 = _PR2;//fijamos el periodo
   CCPR1L=_CCPR1L;// ancho de pulso
   TMR2ON = 1;//arranca el TMR2

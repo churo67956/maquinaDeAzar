@@ -37,7 +37,6 @@ void Initialize();
 //
 
 void main(){
-
   Initialize();  //funcion de inicializacion de parametros para el correcto funcionamiento del programa
   while(1){//HILO PRINCIPAL, TAREAS QUE DEBE ATENDER EL MICRO
     APP_REFRESH_Task();//maquina de estados de refresco
@@ -79,7 +78,7 @@ static void interrupt isr(){
     if (appBlink.state == APP_STATE_ANIMATION){//si estamos bloqueados 
       appBlink.timerCount = appBlink.timerCount + 1;//aumentamos contador de 500ms
     }
-    if (appSound.state == APP_STATE_ANIMATION){//si estamos sonando
+	if (appSound.state == APP_STATE_ANIMATION){//si estamos sonando
       appSound.timerCount = appSound.timerCount + 1; //aumentar contador
       appSound.nextTimerCount = appSound.nextTimerCount + 1;//contador de la duracion de cada nota 
     }

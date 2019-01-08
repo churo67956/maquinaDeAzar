@@ -45,13 +45,12 @@ unsigned char APP_RM_Random(){
 void APP_RM_Task(){
   switch (appRM.state){
   case APP_STATE_INIT://estado de inicio
-    //APP_SOUND_Play(SOUND_TRACK,500,NULL);//sonido de inicio
-    APP_SOUND_SetTrack(&appConfig.SOUND_TRACK[0],appConfig._10_,appConfig._500_MS_,appConfig._50_MS_);//sonido de inicio
+	APP_SOUND_SetTrack(&appConfig.SOUND_TRACK[0],appConfig._10_,appConfig._500_MS_,appConfig._50_MS_);//sonido de inicio
     appSound.state = APP_STATE_INIT;//estado de inicio
     appS2.state = APP_STATE_DISABLE;//desabilitamos el boton
     appModel.digit[0].value = APP_RM_Random();//generamos el primer numero aleatorio
-    appModel.digit[1].value = (appModel.digit[0].value == 7) ? 0 : appModel.digit[0].value + 1;//generamos el segundo numero aleatorio
-    appModel.digit[2].value = (appModel.digit[0].value == 0) ? 7 : appModel.digit[0].value - 1;//generamos el tercer numero aleatorio
+    appModel.digit[1].value = APP_RM_Random();//(appModel.digit[0].value == 7) ? 0 : appModel.digit[0].value + 1;//generamos el segundo numero aleatorio
+    appModel.digit[2].value = APP_RM_Random();(appModel.digit[0].value == 0) ? 7 : appModel.digit[0].value - 1;//generamos el tercer numero aleatorio
     appRM.state =  APP_STATE_ANIMATION;//estado de animacion
     appRM.updateTimerCount = appConfig._50_MS_;//la animacion debe de empezar YA, por motivos de la programacion estado ANIMATION
     appRM.pointer = 0;//apuntados al primer digito
@@ -60,20 +59,18 @@ void APP_RM_Task(){
       //mas prioritario el estado de FIX_DISPLAY que el estado UPDATE
       if (appRM.timerCount >= appConfig._1_SEG_){//fijar el display
         appRM.timerCount = 0;//reiniciamos el contador
-        if (appRM.pointer == 0){//acabamos de parar la primera cifra sonar SOL
-	  //APP_SOUND_Play(SOL,250,NULL);//sonar SOL c
-	  APP_SOUND_SetTrack(&appConfig.SOL[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);
+	    if (appRM.pointer == 0){//acabamos de parar la primera cifra sonar SOL
+	      APP_SOUND_SetTrack(&appConfig.SOL[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);
         }
         else if (appRM.pointer == 1){//acabamos de parar la segunda cifra sonar LA
-	  //APP_SOUND_Play(LA,250,NULL);//sonar LA
-	  APP_SOUND_SetTrack(&appConfig.LA[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);
+	      APP_SOUND_SetTrack(&appConfig.LA[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);
         }
-	else {
-	  APP_SOUND_SetTrack(&appConfig.SI[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);//sonar SI
-	  appRM.state = APP_STATE_WAIT_UNTIL_PLAY_END;
-     	}
-	appSound.state =  APP_STATE_INIT;//estado de inicio de la tarea SOUND        
-	appRM.pointer = appRM.pointer + 1;//actualizamos el apuntador
+        else {
+	      APP_SOUND_SetTrack(&appConfig.SI[0],appConfig._1_,appConfig._250_MS_,appConfig._250_MS_);//sonar SI
+	      appRM.state = APP_STATE_WAIT_UNTIL_PLAY_END;
+        }
+	    appSound.state =  APP_STATE_INIT;//estado de inicio de la tarea SOUND    
+        appRM.pointer = appRM.pointer + 1;//actualizamos el apuntador 
       }
       else if(appRM.updateTimerCount >= appConfig._50_MS_){//actualizar los digitos
         appRM.updateTimerCount = 0;//reiniciamos el contador
@@ -95,18 +92,22 @@ void APP_RM_Task(){
     if (appSound.state == APP_STATE_END
 	|| appSound.state == APP_STATE_DISABLE){//sonido finalizado
       appRM.state = APP_STATE_END;//final de partida
+		appModel.digit[0].value = 3;
+		appModel.digit[1].value = 3;
+		appModel.digit[2].value = 3;
     }
     break;
   case  APP_STATE_END://partida finalizada
-    APP_RM_AwardedSeq();//determinamos si la partida tiene premio
+    APP_RM_AwardedSeq();//determinamos si la partida tiene premio  
     if (appRM.prize == 0){//la combinacion no tiene premio
       appS2.state =  APP_STATE_INIT;//activar el pulsador
     }
     else{//la combinacion tiene premio
       appBlink.state = APP_STATE_INIT;//efectos de parpadeo
-      appOrchestrate.state = APP_STATE_INIT;//efectos sonoros 
+	  appOrchestrate.state = APP_STATE_INIT;//efectos sonoros 
     }
     appRM.state = APP_STATE_DISABLE;//tarea desactivada
+	break;
   default://APP_RM_STATE_DISABLE
     //NO HACER NADA
     break;
