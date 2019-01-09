@@ -92,9 +92,9 @@ void APP_RM_Task(){
     if (appSound.state == APP_STATE_END
 	|| appSound.state == APP_STATE_DISABLE){//sonido finalizado
       appRM.state = APP_STATE_END;//final de partida
-		appModel.digit[0].value = 3;
-		appModel.digit[1].value = 3;
-		appModel.digit[2].value = 3;
+		//appModel.digit[0].value = 3;
+		//appModel.digit[1].value = 3;
+		//appModel.digit[2].value = 3;
     }
     break;
   case  APP_STATE_END://partida finalizada

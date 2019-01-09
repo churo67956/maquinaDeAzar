@@ -12,8 +12,6 @@
 #include "appConfiguration.h"
 #include "appRM.h"
 
-unsigned char ji = 0;
-
 //modelo de datos de la accion pulsar
 struct APP_S2_MODEL{
   unsigned char timerCount;//contador de 20ms

@@ -22,7 +22,6 @@ void APP_S2_Task(){
 	    }
 	    else{//s2 no esta presionado
 	      appS2.state = APP_STATE_HIGH;//estado alto
- ji = ji + 1;
 	      appRM.state = APP_STATE_INIT;//arrancar la partida
 	    }
 	    appS2.timerCount = 0;//reiniciamos el contador
